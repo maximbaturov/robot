@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WebSocker Client</title>
+
+</head>
+
+<body>
+
+</body>
+
+<script>
+
+    var socket = new WebSocket('ws://192.168.0.62:9098/websocket');
+
+    const keys = [
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+    ];
+
+    var lastKeyDown = null
+
+    socket.addEventListener('open', function (event) {
+
+        console.log("message to server Connection Established");
+        socket.send('Connection Established');
+
+    });
+
+    socket.onclose = function () {
+        console.log("Connection closed");
+        console.log('WebSocket disconnected');
+    };
+
+    socket.addEventListener('message', function (event) {
+        console.log("message from server " + event.data);
+    });
+
+
+    document.addEventListener("keyup",(event) => {
+        if(keys.indexOf(event.key) !== -1) {
+            data = {
+                button: event.key,
+                action: "keyup"
+            }
+
+            console.log(data)
+
+            socket.send(JSON.stringify(data));
+        }
+    })
+
+    document.addEventListener("keydown",(event) => {
+
+        if (keys.indexOf(event.key) !== -1 && lastKeyDown != event.key) {
+            lastKeyDown = event.key
+            data = {
+                button: event.key,
+                action: "keydown"
+            }
+
+            console.log(data)
+
+            socket.send(JSON.stringify(data));
+        }
+    });
+
+    function sendMessage(key){
+        console.log("Click Here event")
+
+        socket.send("Click Here event");
+    }
+
+</script>
+
+</html>
