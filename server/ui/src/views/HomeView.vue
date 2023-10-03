@@ -1,0 +1,76 @@
+<script setup>
+import TheWelcome from '../components/TheWelcome.vue'
+</script>
+
+<template>
+  <main>
+    <TheWelcome />
+  </main>
+</template>
+
+<script>
+  // const url = window.location.search;
+    // const urlParams = new URLSearchParams(url);
+    const c = 'test_client_1' //urlParams.get('c');
+
+    // const host = '192.168.0.115';
+    const host = '127.0.0.1';   
+    const port = '9098';
+    
+    const socket = new WebSocket(`ws://${host}:${port}/websocket`);
+    // const socket = new WebSocket("ws://77.123.186.185:9098/websocket");
+
+    const keys = [
+        'ArrowUp',
+        'ArrowDown',    
+        'ArrowLeft',
+        'ArrowRight',
+    ];
+
+    let lastKeyDown = null
+
+    socket.addEventListener('open', function (event) {
+        console.log("connected")
+        socket.send(JSON.stringify({c: c}));
+    });
+
+    socket.onclose = function () {
+        console.log("Connection closed");
+        console.log('WebSocket disconnected');
+    };
+
+    socket.addEventListener('message', (event) => {
+        console.log("message from server " + event.data);
+    });
+
+    document.addEventListener("keyup", (event) => {
+        if(keys.indexOf(event.key) !== -1) {
+            lastKeyDown = null;
+            data = {
+                button: event.key,
+                action: "keyup",
+                c: c
+            }
+
+            console.log(data)
+
+            socket.send(JSON.stringify(data));
+        }
+    })
+
+    document.addEventListener("keydown",(event) => {
+
+        if (keys.indexOf(event.key) !== -1 && lastKeyDown != event.key) {
+            lastKeyDown = event.key
+            data = {
+                button: event.key,
+                action: "keydown",
+                c: c
+            }
+
+            console.log(data)
+
+            socket.send(JSON.stringify(data));
+        }
+    });
+</script>

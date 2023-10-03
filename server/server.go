@@ -22,19 +22,18 @@ var users = make(map[string]string)
 
 func main() {
 
-	r := gin.Default()
-	r.LoadHTMLGlob("templates/*")
-	// r.StaticFile("/favicon.ico", "./resources/img/favicon.ico")
+	engine := gin.Default()
+	
+	engine.StaticFile("/", "./ui/dist/index.html")
+	engine.StaticFile("/favicon.ico", "./ui/dist/favicon.ico")
 
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "client.html", gin.H{})
-	})
+	engine.StaticFS("/assets", http.Dir("./ui/dist/assets/"))
 
-	r.GET("/websocket", func(c *gin.Context) {
+	engine.GET("/websocket", func(c *gin.Context) {
 		wshandler(c.Writer, c.Request)
 	})
 
-	r.Run(":9098")
+	engine.Run(":9098")
 }
 
 var wsupgrader = websocket.Upgrader{
