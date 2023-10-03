@@ -1,41 +1,39 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>WebSocker Client</title>
 
 </head>
-
 <body>
-
+    Hello
 </body>
-
 <script>
+    const url = window.location.search;
+    const urlParams = new URLSearchParams(url);
+    const c = 'test_client_1' //urlParams.get('c');
 
-    var socket = new WebSocket('ws://192.168.0.62:9098/websocket');
+    // const host = '192.168.0.115';
+    const host = '127.0.0.1';   
+    const port = '9098';
+    
+    const socket = new WebSocket(`ws://${host}:${port}/websocket`);
+    // const socket = new WebSocket("ws://77.123.186.185:9098/websocket");
 
     const keys = [
         'ArrowUp',
-        'ArrowDown',
+        'ArrowDown',    
         'ArrowLeft',
         'ArrowRight',
     ];
 
-    var lastKeyDown = null
+    let lastKeyDown = null
 
     socket.addEventListener('open', function (event) {
-
-        console.log("message to server Connection Established");
-        socket.send('Connection Established');
-
+        console.log("connected")
+        socket.send(JSON.stringify({c: c}));
     });
 
     socket.onclose = function () {
@@ -43,16 +41,17 @@
         console.log('WebSocket disconnected');
     };
 
-    socket.addEventListener('message', function (event) {
+    socket.addEventListener('message', (event) => {
         console.log("message from server " + event.data);
     });
 
-
-    document.addEventListener("keyup",(event) => {
+    document.addEventListener("keyup", (event) => {
         if(keys.indexOf(event.key) !== -1) {
+            lastKeyDown = null;
             data = {
                 button: event.key,
-                action: "keyup"
+                action: "keyup",
+                c: c
             }
 
             console.log(data)
@@ -67,7 +66,8 @@
             lastKeyDown = event.key
             data = {
                 button: event.key,
-                action: "keydown"
+                action: "keydown",
+                c: c
             }
 
             console.log(data)
@@ -76,12 +76,5 @@
         }
     });
 
-    function sendMessage(key){
-        console.log("Click Here event")
-
-        socket.send("Click Here event");
-    }
-
 </script>
-
 </html>
