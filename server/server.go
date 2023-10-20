@@ -144,8 +144,8 @@ func main() {
 
 	})
 
-	app.Static("/", "./ui/dist/")
-	app.Static("/*", "./ui/dist/index.html")
+	app.Static("/", "./web/dist/")
+	app.Static("/*", "./web/dist/index.html")
 
 	chanData := make(chan Data{Base64: "",})
 
